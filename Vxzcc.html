@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080B19">
+<title>وکسورا استودیو</title>
+
+<!-- ============ بخش ۱: رنگ‌ها و ظاهر کلی ============ -->
+<style>
+/* هویت وکسورا: شب‌آبی عمیق، بنفش برقی و فیروزه‌ای سرد */
+:root {
+  --bg: #080B19;
+  --bg2: #0D1126;
+  --surface: #121730;
+  --surface2: #181E3B;
+  --line: #252C52;
+  --ink: #ECEFFB;
+  --muted: #8F98BF;
+  --violet: #8C6CFF;
+  --cyan: #38D8EA;
+  --ok: #3DDC97;
+  --danger: #FF6B7A;
+  --on-accent: #0A0720;
+  --radius: 16px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.7 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, sans-serif;
+  min-height: 100vh;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+[hidden] { display: none !important; }
+img, video, iframe { max-width: 100%; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 22px; border-radius: 12px; font-weight: 700; text-decoration: none;
+  background: linear-gradient(135deg, var(--violet), var(--cyan)); color: var(--on-accent);
+  transition: transform .15s, filter .15s;
+}
+.btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn:active { transform: none; }
+.btn[disabled] { opacity: .55; cursor: default; transform: none; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn.ghost:hover { border-color: var(--violet); }
+.btn.danger { background: transparent; color: var(--danger); border: 1px solid var(--line); }
+.btn.small { padding: 7px 13px; font-size: 14px; border-radius: 10px; }
+
+.in {
+  width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--bg2); color: var(--ink);
+}
+.in:focus { border-color: var(--violet); outline: none; box-shadow: 0 0 0 3px rgba(140, 108, 255, .25); }
+.in.ltr { direction: ltr; text-align: left; }
+textarea.in { resize: vertical; min-height: 90px; }
+.err { color: var(--danger); font-size: 14px; min-height: 1.4em; margin: 0; }
+.pill { display: inline-block; padding: 1px 10px; border-radius: 999px; font-size: 12.5px; background: rgba(140, 108, 255, .16); color: #BCA9FF; border: 1px solid rgba(140, 108, 255, .35); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<!-- ============ بخش ۲: ظاهر سایت (صفحه‌ی ورود، پنل، درس‌ها، دانلودها) ============ -->
+<style>
+#root { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- صفحه‌ی ورود ---------- */
+.welcome { position: relative; flex: 1; min-height: 100vh; display: grid; place-items: center; padding: 32px max(20px, env(safe-area-inset-right)); overflow: hidden; text-align: center; }
+.welcome::before, .welcome::after { content: ""; position: absolute; border-radius: 50%; filter: blur(80px); opacity: .5; pointer-events: none; }
+.welcome::before { width: 46vmax; height: 46vmax; background: var(--violet); inset-block-start: -18vmax; inset-inline-start: -14vmax; opacity: .28; animation: drift 18s ease-in-out infinite alternate; }
+.welcome::after { width: 38vmax; height: 38vmax; background: var(--cyan); inset-block-end: -16vmax; inset-inline-end: -10vmax; opacity: .18; animation: drift 22s ease-in-out infinite alternate-reverse; }
+@keyframes drift { to { transform: translate(6vmax, 5vmax) scale(1.12); } }
+.grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 56px 56px; opacity: .22; mask-image: radial-gradient(circle at 50% 45%, #000 0, transparent 70%); -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 0, transparent 70%); }
+.wbox { position: relative; z-index: 1; width: 100%; max-width: 460px; display: flex; flex-direction: column; align-items: center; gap: 16px; animation: rise .8s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+.mark { width: 92px; height: 92px; }
+.mark path { stroke-dasharray: 150; stroke-dashoffset: 150; animation: draw 1.6s .2s ease forwards; }
+.mark circle { opacity: 0; animation: pop .5s 1.5s ease forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { to { opacity: 1; } }
+.welcome h1 { margin: 4px 0 0; font-size: clamp(28px, 7vw, 42px); line-height: 1.25; }
+.welcome p.lead { margin: 0; color: var(--muted); font-size: 17px; max-width: 38ch; }
+.gate { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.wbox .btn { min-width: 180px; font-size: 17px; padding: 14px 28px; }
+
+/* ---------- پنل ---------- */
+.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 12px max(16px, env(safe-area-inset-right)); background: rgba(8, 11, 25, .82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top .logo { width: 34px; height: 34px; flex: none; }
+.top .name { font-weight: 800; font-size: 18px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top .back { padding: 6px 14px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; font-size: 14px; }
+.top .back:hover { border-color: var(--violet); }
+.page { width: 100%; max-width: 1040px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right)) 48px; flex: 1; }
+.hero h2 { margin: 0 0 6px; font-size: clamp(24px, 5vw, 34px); line-height: 1.3; }
+.hero p { margin: 0 0 26px; color: var(--muted); }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+.card { position: relative; display: flex; gap: 16px; align-items: center; padding: 22px; text-align: right; text-decoration: none; border-radius: 20px; background: linear-gradient(160deg, var(--surface), var(--bg2)); border: 1px solid var(--line); animation: rise .6s both; animation-delay: calc(var(--i, 0) * 70ms); transition: border-color .2s, transform .2s; }
+.card:hover { border-color: var(--violet); transform: translateY(-3px); }
+.card .ic { width: 58px; height: 58px; flex: none; display: grid; place-items: center; font-size: 30px; border-radius: 16px; background: rgba(140, 108, 255, .14); border: 1px solid rgba(140, 108, 255, .3); }
+.card h3 { margin: 0; font-size: 19px; line-height: 1.4; }
+.card .d { margin: 2px 0 0; color: var(--muted); font-size: 14.5px; }
+.card .n { margin-top: 6px; font-size: 13px; color: var(--cyan); }
+.card .arrow { margin-inline-start: auto; color: var(--muted); font-size: 22px; }
+
+.sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.sec-head .ic { width: 52px; height: 52px; display: grid; place-items: center; font-size: 28px; border-radius: 14px; background: rgba(140, 108, 255, .14); border: 1px solid rgba(140, 108, 255, .3); }
+.sec-head h2 { margin: 0; font-size: 24px; line-height: 1.3; }
+.sec-head p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.empty { text-align: center; padding: 56px 16px; color: var(--muted); border: 1px dashed var(--line); border-radius: 20px; }
+.empty .big { font-size: 42px; }
+
+/* ویدیوها */
+.lessons { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .lessons { grid-template-columns: 1fr; } }
+.player { aspect-ratio: 16 / 9; width: 100%; background: #000; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); text-align: center; }
+.player video, .player iframe { width: 100%; height: 100%; border: 0; background: #000; }
+.now { margin: 12px 2px 0; }
+.now h3 { margin: 0; font-size: 18px; }
+.now p { margin: 4px 0 0; color: var(--muted); white-space: pre-wrap; }
+.progress { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+.progress .bar { height: 6px; border-radius: 3px; background: var(--line); margin-top: 6px; overflow: hidden; }
+.progress .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--violet), var(--cyan)); transition: width .4s; }
+.list { display: flex; flex-direction: column; gap: 8px; max-height: 70vh; overflow-y: auto; padding-inline-end: 2px; }
+.lesson { display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-align: right; width: 100%; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.lesson:hover { border-color: var(--violet); }
+.lesson.on { border-color: var(--cyan); background: var(--surface2); }
+.lesson .no { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--bg2); font-weight: 700; font-size: 14px; color: var(--cyan); }
+.lesson .tt { flex: 1; min-width: 0; line-height: 1.5; }
+.lesson .ck { color: var(--ok); font-size: 18px; }
+
+/* دانلودها و لینک‌ها */
+.apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.app { display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 20px; background: linear-gradient(160deg, var(--surface), var(--bg2)); border: 1px solid var(--line); }
+.app .row { display: flex; align-items: center; gap: 12px; }
+.app .ic { width: 52px; height: 52px; flex: none; display: grid; place-items: center; font-size: 26px; border-radius: 14px; background: var(--bg2); border: 1px solid var(--line); }
+.app h3 { margin: 0; font-size: 18px; line-height: 1.4; }
+.app p { margin: 0; color: var(--muted); font-size: 14.5px; white-space: pre-wrap; flex: 1; }
+.app .meta { font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
+.links { display: flex; flex-direction: column; gap: 10px; }
+.link { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 16px; text-decoration: none; background: var(--surface); border: 1px solid var(--line); transition: border-color .2s; }
+.link:hover { border-color: var(--cyan); }
+.link .ic { font-size: 26px; width: 44px; text-align: center; }
+.link .tt { flex: 1; min-width: 0; }
+.link b { display: block; }
+.link span.d { color: var(--muted); font-size: 14px; }
+.link .go { color: var(--cyan); font-size: 14px; white-space: nowrap; }
+.doc { display: flex; flex-direction: column; gap: 14px; }
+.doc article { padding: 18px 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.doc h3 { margin: 0 0 6px; }
+.doc p { margin: 0; white-space: pre-wrap; color: #CBD1EE; }
+.foot { text-align: center; color: var(--muted); font-size: 13.5px; padding: 22px 16px max(22px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+</style>
+
+<!-- ============ بخش ۳: ظاهر پنل مدیریت ============ -->
+<style>
+#root { min-height: 100vh; }
+.login { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.login form { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+.login h1 { margin: 0 0 4px; font-size: 24px; }
+.login p.sub { margin: 0 0 8px; color: var(--muted); font-size: 14.5px; }
+
+.abar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px max(16px, env(safe-area-inset-right)); background: rgba(8, 11, 25, .9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.abar h1 { margin: 0; font-size: 18px; flex: 1; min-width: 120px; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 22px max(16px, env(safe-area-inset-right)) 60px; display: flex; flex-direction: column; gap: 18px; }
+.panel { padding: 20px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.panel h2 { margin: 0; font-size: 19px; }
+.panel .hint { margin: 0; color: var(--muted); font-size: 14px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 14px; color: var(--muted); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .two { grid-template-columns: 1fr; } }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.row.end { justify-content: flex-end; }
+.spacer { flex: 1; }
+.ok { color: var(--ok); font-size: 14px; }
+
+.sec { border: 1px solid var(--line); border-radius: 16px; background: var(--bg2); overflow: hidden; }
+.sec.off { opacity: .6; }
+.sec > .hd { display: flex; align-items: center; gap: 12px; padding: 14px 16px; flex-wrap: wrap; }
+.sec .ic { font-size: 26px; }
+.sec .tt { flex: 1; min-width: 140px; }
+.sec .tt b { display: block; }
+.sec .tt span { color: var(--muted); font-size: 13px; }
+.items { border-top: 1px solid var(--line); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.it { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); flex-wrap: wrap; }
+.it.off { opacity: .55; }
+.it .tt { flex: 1; min-width: 150px; line-height: 1.5; }
+.it .tt small { display: block; color: var(--muted); direction: ltr; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 48ch; }
+.mini { display: flex; gap: 6px; flex-wrap: wrap; }
+
+dialog { width: min(560px, calc(100vw - 24px)); max-height: calc(100vh - 24px); border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--ink); padding: 0; }
+dialog::backdrop { background: rgba(3, 5, 14, .72); }
+dialog form { padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+dialog h3 { margin: 0; font-size: 19px; }
+.prog { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--violet), var(--cyan)); transition: width .15s; }
+.check { display: flex; align-items: center; gap: 8px; }
+.check input { width: 18px; height: 18px; accent-color: var(--violet); }
+.toast { position: fixed; inset-inline: 0; bottom: max(18px, env(safe-area-inset-bottom)); margin: auto; width: fit-content; max-width: 90vw; padding: 10px 18px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--line); z-index: 20; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<noscript><p style="padding:24px;text-align:center">برای استفاده از این سایت جاوااسکریپت را روشن کن.</p></noscript>
+
+<!-- ============ بخش ۴: محتوای سایت (بخش‌ها، درس‌ها، اپ‌ها، لینک‌ها) — با پنل مدیریت ساخته و عوض می‌شود ============ -->
+<script type="application/json" id="vx-content">
+{
+  "settings": {
+    "site_name": "وکسورا استودیو",
+    "welcome_title": "به وکسورا خوش آمدی",
+    "welcome_text": "آموزش، اپلیکیشن و ابزارهای وکسورا یک‌جا",
+    "enter_label": "ورود",
+    "footer_text": "وکسورا استودیو"
+  },
+  "sections": [
+    {
+      "id": 1,
+      "title": "آموزش پایتون ۰ تا ۱۰۰",
+      "icon": "🐍",
+      "type": "videos",
+      "descr": "ویدیوهای آموزشی پایتون، از صفر تا حرفه‌ای",
+      "visible": true,
+      "items": []
+    },
+    {
+      "id": 2,
+      "title": "اپلیکیشن‌ها",
+      "icon": "📱",
+      "type": "downloads",
+      "descr": "اپلیکیشن‌ها و ابزارهای قابل دانلود",
+      "visible": true,
+      "items": []
+    },
+    {
+      "id": 3,
+      "title": "اپلیکیشن‌های رسمی وکسورا",
+      "icon": "⭐",
+      "type": "downloads",
+      "descr": "نسخه‌های رسمی و امن اپلیکیشن‌های وکسورا",
+      "visible": true,
+      "items": []
+    },
+    {
+      "id": 4,
+      "title": "کانال‌های ما",
+      "icon": "📣",
+      "type": "links",
+      "descr": "ما را در شبکه‌های اجتماعی دنبال کن",
+      "visible": true,
+      "items": []
+    }
+  ]
+}
+</script>
+
+<!-- ============ بخش ۵: برنامه‌ی سایت ============ -->
+<script>
+'use strict';
+(() => {
+  const FA = '۰۱۲۳۴۵۶۷۸۹';
+  const fa = s => String(s).replace(/\d/g, d => FA[d]);
+  const root = document.getElementById('root');
+  let DATA = null;
+
+  function h(tag, props, ...kids) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (k === 'class') e.className = v;
+      else if (k === 'style') e.setAttribute('style', v);
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (v === true) e.setAttribute(k, '');
+      else if (v !== false && v != null) e.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) {
+      if (kid == null || kid === false) continue;
+      e.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    }
+    return e;
+  }
+  const ss = {
+    get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* ذخیره ممکن نیست */ } }
+  };
+  const seen = (() => { try { return new Set(JSON.parse(localStorage.getItem('vx_seen') || '[]')); } catch { return new Set(); } })();
+  const saveSeen = () => { try { localStorage.setItem('vx_seen', JSON.stringify([...seen])); } catch { /* ignore */ } };
+
+  const sizeFa = n => !n ? '' : n >= 1073741824 ? fa((n / 1073741824).toFixed(1)) + ' گیگابایت' : n >= 1048576 ? fa((n / 1048576).toFixed(1)) + ' مگابایت' : fa(Math.max(1, Math.round(n / 1024))) + ' کیلوبایت';
+
+  function mark(id, big) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 64 64');
+    svg.setAttribute('class', big ? 'mark' : 'logo');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8C6CFF"/><stop offset="1" stop-color="#38D8EA"/></linearGradient></defs>` +
+      `<path d="M10 12 L32 52 L54 12" fill="none" stroke="url(#${id})" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>` +
+      '<circle cx="32" cy="12" r="3.4" fill="#ECEFFB"/>';
+    return svg;
+  }
+
+  async function load() {
+    const c = JSON.parse(document.getElementById('vx-content').textContent);
+    DATA = {
+      settings: c.settings || {},
+      gate: { required: false, ok: true },
+      sections: (c.sections || []).filter(s => s.visible !== false).map(s => ({ ...s, items: (s.items || []).filter(i => i.visible !== false) }))
+    };
+    document.title = DATA.settings.site_name || 'وکسورا';
+  }
+
+  const entered = () => ss.get('vx_in') === '1' && DATA && DATA.gate.ok;
+
+  function route() {
+    window.scrollTo(0, 0);
+    if (location.hash === '#admin' && window.VXAdmin) return window.VXAdmin.start();
+    if (!entered()) return renderWelcome();
+    const m = location.hash.match(/^#s(\d+)$/);
+    const sec = m && DATA.sections.find(s => s.id === Number(m[1]));
+    return sec ? renderSection(sec) : renderHome();
+  }
+
+  // ---------- صفحه‌ی ورود ----------
+  function renderWelcome() {
+    const S = DATA.settings;
+    const need = DATA.gate.required && !DATA.gate.ok;
+    const code = h('input', { class: 'in ltr', type: 'password', id: 'code', placeholder: S.gate_hint || 'کد ورود', autocomplete: 'off', 'aria-label': 'کد ورود' });
+    const msg = h('p', { class: 'err', role: 'alert' });
+    const go = h('button', { class: 'btn', type: 'submit' }, S.enter_label || 'ورود');
+    const form = h('form', { class: 'gate', novalidate: true, onsubmit: async ev => {
+      ev.preventDefault(); msg.textContent = ''; go.disabled = true;
+      try {
+        if (need) {
+          const r = await fetch('/api/enter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code.value }), credentials: 'same-origin' });
+          if (r.status === 429) { msg.textContent = 'تلاش‌های اشتباه زیاد بود. چند دقیقه بعد دوباره امتحان کن.'; go.disabled = false; return; }
+          if (!r.ok) { msg.textContent = 'کد درست نیست.'; go.disabled = false; return; }
+          await load();
+        }
+        ss.set('vx_in', '1');
+        location.hash = '';
+        route();
+      } catch { msg.textContent = 'اتصال برقرار نشد. دوباره امتحان کن.'; go.disabled = false; }
+    } }, need && code, msg, h('div', { style: 'display:flex;justify-content:center' }, go));
+    root.replaceChildren(h('main', { class: 'welcome' }, h('div', { class: 'grid-bg' }),
+      h('div', { class: 'wbox' }, mark('vxg', true), h('h1', null, S.welcome_title), h('p', { class: 'lead' }, S.welcome_text), form)));
+    if (need) code.focus();
+  }
+
+  // ---------- صفحه‌ی اصلی پنل ----------
+  function shell(back, ...content) {
+    const S = DATA.settings;
+    return [
+      h('header', { class: 'top' }, mark('vxg2', false), h('div', { class: 'name' }, S.site_name),
+        back && h('a', { class: 'back', href: '#' }, 'بازگشت ➜')),
+      h('main', { class: 'page' }, ...content),
+      h('footer', { class: 'foot' }, S.footer_text)
+    ];
+  }
+
+  function renderHome() {
+    const S = DATA.settings;
+    const cards = DATA.sections.map((s, i) => h('a', { class: 'card', href: '#s' + s.id, style: `--i:${i}` },
+      h('div', { class: 'ic', 'aria-hidden': 'true' }, s.icon),
+      h('div', null, h('h3', null, s.title), s.descr && h('p', { class: 'd' }, s.descr), h('div', { class: 'n' }, s.items.length ? fa(s.items.length) + ' مورد' : 'به‌زودی')),
+      h('span', { class: 'arrow', 'aria-hidden': 'true' }, '‹')));
+    root.replaceChildren(...shell(false,
+      h('div', { class: 'hero' }, h('h2', null, S.welcome_title), h('p', null, S.welcome_text)),
+      cards.length ? h('div', { class: 'cards' }, cards) : h('div', { class: 'empty' }, h('div', { class: 'big' }, '🛠️'), h('p', null, 'هنوز بخشی اضافه نشده است.'))));
+  }
+
+  // ---------- یک بخش ----------
+  function renderSection(sec) {
+    const head = h('div', { class: 'sec-head' }, h('div', { class: 'ic', 'aria-hidden': 'true' }, sec.icon), h('div', null, h('h2', null, sec.title), sec.descr && h('p', null, sec.descr)));
+    let body;
+    if (!sec.items.length) body = h('div', { class: 'empty' }, h('div', { class: 'big' }, '⏳'), h('p', null, 'به‌زودی محتوا اضافه می‌شود.'));
+    else if (sec.type === 'videos') body = videos(sec);
+    else if (sec.type === 'downloads') body = h('div', { class: 'apps' }, sec.items.map(downloadCard));
+    else if (sec.type === 'links') body = h('div', { class: 'links' }, sec.items.map(linkRow));
+    else body = h('div', { class: 'doc' }, sec.items.map(it => h('article', null, h('h3', null, it.title), it.descr && h('p', null, it.descr))));
+    root.replaceChildren(...shell(true, head, body));
+    document.title = sec.title + ' | ' + DATA.settings.site_name;
+  }
+
+  function downloadCard(it) {
+    const external = it.kind !== 'file';
+    const href = it.url;
+    return h('div', { class: 'app' },
+      h('div', { class: 'row' }, h('div', { class: 'ic', 'aria-hidden': 'true' }, it.icon || '📦'),
+        h('div', null, h('h3', null, it.title), it.badge && h('span', { class: 'pill' }, it.badge))),
+      it.descr && h('p', null, it.descr),
+      h('div', { class: 'meta' }, it.file_size ? h('span', null, sizeFa(it.file_size)) : null),
+      h('a', external ? { class: 'btn', href, target: '_blank', rel: 'noopener noreferrer' } : { class: 'btn', href, download: it.file_name || true }, '⬇ دانلود'));
+  }
+
+  function linkRow(it) {
+    return h('a', { class: 'link', href: it.url, target: '_blank', rel: 'noopener noreferrer' },
+      h('span', { class: 'ic', 'aria-hidden': 'true' }, it.icon || '🔗'),
+      h('span', { class: 'tt' }, h('b', null, it.title), it.descr && h('span', { class: 'd' }, it.descr)),
+      h('span', { class: 'go' }, 'باز کردن ↗'));
+  }
+
+  function videos(sec) {
+    const items = sec.items;
+    const player = h('div', { class: 'player' }, h('div', null, h('div', { style: 'font-size:40px' }, '▶'), h('p', null, 'یک درس را انتخاب کن')));
+    const now = h('div', { class: 'now' });
+    const bar = h('i'), progText = h('span');
+    const rows = [];
+    const paintProgress = () => {
+      const n = items.filter(i => seen.has(i.id)).length;
+      progText.textContent = `${fa(n)} از ${fa(items.length)} درس را دیده‌ای`;
+      bar.style.width = (n / items.length * 100) + '%';
+    };
+    function markSeen(it, row) {
+      if (seen.has(it.id)) return;
+      seen.add(it.id); saveSeen(); paintProgress();
+      row.append(h('span', { class: 'ck', 'aria-label': 'دیده شد' }, '✓'));
+    }
+    function play(i) {
+      const it = items[i], row = rows[i];
+      rows.forEach(r => r.classList.remove('on')); row.classList.add('on');
+      let el;
+      if (it.kind === 'embed') {
+        el = h('iframe', { src: it.url, title: it.title, allowfullscreen: true, allow: 'fullscreen; picture-in-picture', referrerpolicy: 'no-referrer', sandbox: 'allow-scripts allow-same-origin allow-presentation allow-popups' });
+        markSeen(it, row);
+      } else {
+        el = h('video', { controls: true, playsinline: true, preload: 'metadata', src: it.url });
+        el.addEventListener('timeupdate', () => { if (el.duration && el.currentTime / el.duration > 0.9) markSeen(it, row); });
+        el.addEventListener('ended', () => { markSeen(it, row); if (i + 1 < items.length) { play(i + 1); const v = player.querySelector('video'); if (v) v.play().catch(() => {}); } });
+      }
+      player.replaceChildren(el);
+      now.replaceChildren(h('h3', null, (it.badge ? it.badge + ' · ' : '') + it.title), it.descr && h('p', null, it.descr));
+      if (window.matchMedia('(max-width: 860px)').matches) player.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+    items.forEach((it, i) => {
+      const row = h('button', { class: 'lesson', onclick: () => play(i) },
+        h('span', { class: 'no' }, fa(i + 1)), h('span', { class: 'tt' }, it.title), seen.has(it.id) && h('span', { class: 'ck' }, '✓'));
+      rows.push(row);
+    });
+    paintProgress();
+    return h('div', { class: 'lessons' }, h('div', null, player, now),
+      h('div', null, h('div', { class: 'progress' }, progText, h('div', { class: 'bar' }, bar)), h('div', { class: 'list' }, rows)));
+  }
+
+  // ---------- شروع ----------
+  window.addEventListener('hashchange', () => { if (DATA) route(); });
+  load().then(route).catch(() => {
+    root.replaceChildren(h('main', { class: 'welcome' }, h('div', { class: 'wbox' }, h('h1', null, 'اتصال برقرار نشد'),
+      h('p', { class: 'lead' }, 'اینترنت را بررسی کن و دوباره امتحان کن.'), h('button', { class: 'btn', onclick: () => location.reload() }, 'تلاش دوباره'))));
+  });
+})();
+</script>
+
+<!-- ============ بخش ۶: پنل مدیریت (آدرس: سایت/#admin) ============ -->
+<script>
+'use strict';
+(() => {
+  const root = document.getElementById('root');
+  const TYPES = { videos: 'ویدیو (درس‌ها)', downloads: 'دانلود (اپ و فایل)', links: 'لینک‌ها', text: 'متن' };
+  const KINDS = { file: 'فایل (داخل خود سایت)', url: 'لینک مستقیم', embed: 'ویدیوی آپارات / یوتیوب / ویمئو' };
+  const MAX_FILE = 25 * 1024 * 1024 - 1024; // سقف هر فایل در میزبانی استاتیک کلودفلر ۲۵ مگابایت
+  let D = null;                 // محتوای سایت (content.json)
+  const pending = new Map();    // مسیر فایل جدید -> File
+
+  function h(tag, props, ...kids) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (k === 'class') e.className = v;
+      else if (k === 'style') e.setAttribute('style', v);
+      else if (k === 'value') e.value = v;
+      else if (k === 'checked') e.checked = !!v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (v === true) e.setAttribute(k, '');
+      else if (v !== false && v != null) e.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) { if (kid == null || kid === false) continue; e.append(kid.nodeType ? kid : document.createTextNode(String(kid))); }
+    return e;
+  }
+  const field = (label, input) => h('div', { class: 'field' }, h('label', null, label), input);
+  const sizeFa = n => !n ? '' : n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+  const toast = t => { const e = h('div', { class: 'toast', role: 'status' }, t); document.body.append(e); setTimeout(() => e.remove(), 3000); };
+  const nextId = () => 1 + Math.max(0, ...D.sections.flatMap(s => [s.id, ...s.items.map(i => i.id)]));
+  const cleanUrl = u => { try { const x = new URL(String(u).trim()); return x.protocol === 'https:' || x.protocol === 'http:' ? x.href : ''; } catch { return ''; } };
+  const embedOk = u => { try { const x = new URL(u).hostname; return ['aparat.com', 'www.aparat.com', 'www.youtube.com', 'www.youtube-nocookie.com', 'player.vimeo.com'].includes(x); } catch { return false; } };
+  const swap = (arr, i, d) => { const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; };
+
+  // ---------- ساخت زیپ (بدون کتابخانه) ----------
+  const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = u8 => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  async function makeZip(entries) { // entries: [{name, blob}]
+    const enc = new TextEncoder(), parts = [], central = [];
+    const d = new Date(), time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    let offset = 0;
+    for (const e of entries) {
+      const name = enc.encode(e.name), data = new Uint8Array(await e.blob.arrayBuffer()), crc = crc32(data);
+      const lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+      lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+      parts.push(lh.buffer, name, data);
+      const ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+      ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true);
+      ch.setUint32(42, offset, true);
+      central.push(ch.buffer, name);
+      offset += 30 + name.length + data.length;
+    }
+    let csize = 0; for (const c of central) csize += c.byteLength;
+    const end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true); end.setUint32(12, csize, true); end.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, end.buffer], { type: 'application/zip' });
+  }
+  function saveBlob(blob, name) {
+    const a = h('a', { href: URL.createObjectURL(blob), download: name });
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  }
+  const contentJson = () => JSON.stringify(D, null, 2).replace(/</g, '\\u003c');
+  const newFiles = () => D.sections.flatMap(s => s.items).filter(i => i.kind === 'file' && pending.has(i.url));
+
+  async function buildIndex(status) {
+    try {
+      const html = await (await fetch(location.href.split('#')[0].split('?')[0], { cache: 'no-store' })).text();
+      const re = /(<script type="application\/json" id="vx-content">)[\s\S]*?(<\/script>)/;
+      if (!re.test(html)) throw new Error('index.html فعلی ساختار درست ندارد');
+      saveBlob(new Blob([html.replace(re, (m, a, z) => a + '\n' + contentJson() + '\n' + z)], { type: 'text/html' }), 'index.html');
+      status.textContent = 'index.html جدید ساخته شد ✓ آن را جای index.html قبلی در گیت‌هاب بگذار.' + (newFiles().length ? ' فایل‌های جدید را هم از دکمه‌ی دوم بگیر.' : '');
+    } catch (e) { status.textContent = 'خطا: ' + e.message; }
+  }
+  async function buildFiles(status) {
+    try {
+      const list = newFiles();
+      if (!list.length) { status.textContent = 'فایل جدیدی نیست.'; return; }
+      status.textContent = 'در حال ساخت زیپ…';
+      saveBlob(await makeZip(list.map(i => ({ name: i.url, blob: pending.get(i.url) }))), 'new-files.zip');
+      status.textContent = 'new-files.zip ساخته شد ✓ بازش کن و پوشه‌ی files را در گیت‌هاب آپلود کن.';
+    } catch (e) { status.textContent = 'خطا: ' + e.message; }
+  }
+
+  // ---------- صفحه‌ی اصلی مدیریت ----------
+  const render = () => {
+    const S = D.settings;
+    const f = {
+      site_name: h('input', { class: 'in', maxlength: 60, value: S.site_name || '' }),
+      welcome_title: h('input', { class: 'in', maxlength: 120, value: S.welcome_title || '' }),
+      welcome_text: h('textarea', { class: 'in', maxlength: 400, value: S.welcome_text || '' }),
+      enter_label: h('input', { class: 'in', maxlength: 30, value: S.enter_label || '' }),
+      footer_text: h('input', { class: 'in', maxlength: 200, value: S.footer_text || '' })
+    };
+    for (const [k, el] of Object.entries(f)) el.addEventListener('input', () => { D.settings[k] = el.value; });
+    const status = h('p', { class: 'hint', role: 'status' });
+    const b1 = h('button', { class: 'btn' }, '⬇ ساخت index.html جدید');
+    const b2 = h('button', { class: 'btn ghost' }, '⬇ فایل‌های جدید (zip)');
+    b1.addEventListener('click', () => buildIndex(status)); b2.addEventListener('click', () => buildFiles(status));
+    const publish = h('section', { class: 'panel' },
+      h('h2', null, '🚀 انتشار تغییرها'),
+      h('p', { class: 'hint' }, 'تغییرها فقط روی همین صفحه است. «ساخت index.html جدید» را بزن و فایل را جای index.html قبلی در گیت‌هاب بگذار. اگر فایل اپ یا ویدیو اضافه کردی، zip فایل‌های جدید را هم بگیر و پوشه‌ی files را در گیت‌هاب آپلود کن. قبل از بستن صفحه حتماً این کار را بکن.'),
+      h('div', { class: 'row' }, b1, b2), status);
+    const settings = h('section', { class: 'panel' }, h('h2', null, '⚙️ صفحه‌ی ورود و تنظیمات'),
+      h('div', { class: 'two' }, field('نام سایت', f.site_name), field('متن دکمه‌ی ورود', f.enter_label)),
+      field('عنوان صفحه‌ی ورود', f.welcome_title), field('متن زیر عنوان', f.welcome_text), field('متن پایین صفحه', f.footer_text));
+    const secs = h('section', { class: 'panel' },
+      h('div', { class: 'row' }, h('h2', null, '🧩 بخش‌ها'), h('span', { class: 'spacer' }), h('button', { class: 'btn small', onclick: () => sectionDialog(null) }, '+ بخش جدید')),
+      h('p', { class: 'hint' }, 'هر بخش یک کارت در پنل اصلی است. نوع بخش تعیین می‌کند محتوایش ویدیو، فایل دانلودی، لینک یا متن باشد.'),
+      D.sections.length ? D.sections.map(secBlock) : h('p', { class: 'hint' }, 'هنوز بخشی نیست.'));
+    root.replaceChildren(
+      h('header', { class: 'abar' }, h('h1', null, 'مدیریت ' + (S.site_name || 'وکسورا')), h('a', { class: 'btn ghost small', href: '#' }, 'دیدن سایت ➜')),
+      h('main', { class: 'wrap' }, publish, settings, secs));
+  };
+
+  function secBlock(s, i) {
+    return h('div', { class: 'sec' + (s.visible ? '' : ' off') },
+      h('div', { class: 'hd' }, h('span', { class: 'ic' }, s.icon),
+        h('div', { class: 'tt' }, h('b', null, s.title), h('span', null, TYPES[s.type] + ' · ' + s.items.length + ' مورد' + (s.visible ? '' : ' · مخفی'))),
+        h('div', { class: 'mini' },
+          h('button', { class: 'btn ghost small', 'aria-label': 'بالا', disabled: i === 0, onclick: () => { swap(D.sections, i, -1); render(); } }, '↑'),
+          h('button', { class: 'btn ghost small', 'aria-label': 'پایین', disabled: i === D.sections.length - 1, onclick: () => { swap(D.sections, i, 1); render(); } }, '↓'),
+          h('button', { class: 'btn ghost small', onclick: () => sectionDialog(s) }, 'ویرایش'),
+          h('button', { class: 'btn small', onclick: () => itemDialog(s, null) }, '+ افزودن'))),
+      s.items.length ? h('div', { class: 'items' }, s.items.map((it, j) => itemRow(s, it, j))) : null);
+  }
+
+  function itemRow(s, it, j) {
+    const where = it.kind === 'file' ? 'فایل: ' + it.file_name + ' (' + sizeFa(it.file_size) + ')' + (pending.has(it.url) ? ' — جدید' : '') : it.url;
+    return h('div', { class: 'it' + (it.visible ? '' : ' off') }, h('span', null, it.icon || '•'),
+      h('div', { class: 'tt' }, h('b', null, it.title), s.type !== 'text' && h('small', null, where)),
+      h('div', { class: 'mini' },
+        h('button', { class: 'btn ghost small', 'aria-label': 'بالا', disabled: j === 0, onclick: () => { swap(s.items, j, -1); render(); } }, '↑'),
+        h('button', { class: 'btn ghost small', 'aria-label': 'پایین', disabled: j === s.items.length - 1, onclick: () => { swap(s.items, j, 1); render(); } }, '↓'),
+        h('button', { class: 'btn ghost small', onclick: () => itemDialog(s, it) }, 'ویرایش')));
+  }
+
+  function dialog(build) { const d = h('dialog'); d.addEventListener('close', () => d.remove()); build(d); document.body.append(d); d.showModal(); return d; }
+
+  function sectionDialog(s) {
+    const title = h('input', { class: 'in', maxlength: 80, required: true, value: s ? s.title : '' });
+    const icon = h('input', { class: 'in', maxlength: 8, value: s ? s.icon : '📁' });
+    const type = h('select', { class: 'in' }, Object.entries(TYPES).map(([k, v]) => h('option', { value: k, selected: s && s.type === k }, v)));
+    const descr = h('textarea', { class: 'in', maxlength: 300, value: s ? s.descr : '' });
+    const vis = h('input', { type: 'checkbox', checked: s ? s.visible !== false : true });
+    let confirmDel = false;
+    const del = s && h('button', { class: 'btn danger small', type: 'button', onclick: ev => {
+      if (!confirmDel) { confirmDel = true; ev.target.textContent = `مطمئنی؟ ${s.items.length} مورد پاک می‌شود`; return; }
+      D.sections = D.sections.filter(x => x !== s); d.close(); render();
+    } }, 'حذف بخش');
+    const d = dialog(dlg => dlg.append(h('form', { method: 'dialog', onsubmit: ev => {
+      ev.preventDefault();
+      const v = { title: title.value.trim(), icon: icon.value.trim() || '📁', type: type.value, descr: descr.value.trim(), visible: vis.checked };
+      if (!v.title) return;
+      if (s) Object.assign(s, v); else D.sections.push({ id: nextId(), ...v, items: [] });
+      dlg.close(); render();
+    } }, h('h3', null, s ? 'ویرایش بخش' : 'بخش جدید'),
+    h('div', { class: 'two' }, field('عنوان', title), field('آیکون (ایموجی)', icon)),
+    field('نوع بخش', type), field('توضیح کوتاه', descr), h('label', { class: 'check' }, vis, 'نمایش در سایت'),
+    h('div', { class: 'row' }, h('button', { class: 'btn', type: 'submit' }, 'ذخیره'), h('button', { class: 'btn ghost', type: 'button', onclick: () => dlg.close() }, 'بستن'), h('span', { class: 'spacer' }), del))));
+    title.focus();
+  }
+
+  function itemDialog(sec, it) {
+    const title = h('input', { class: 'in', maxlength: 120, required: true, value: it ? it.title : '' });
+    const icon = h('input', { class: 'in', maxlength: 8, value: it ? it.icon : '' });
+    const badge = h('input', { class: 'in', maxlength: 30, value: it ? it.badge : '', placeholder: sec.type === 'downloads' ? 'مثلاً نسخه ۱٫۲' : sec.type === 'videos' ? 'مثلاً درس ۱' : '' });
+    const descr = h('textarea', { class: 'in', maxlength: 1500, value: it ? it.descr : '' });
+    const vis = h('input', { type: 'checkbox', checked: it ? it.visible !== false : true });
+    const kinds = sec.type === 'links' ? ['url'] : sec.type === 'downloads' ? ['file', 'url'] : ['file', 'url', 'embed'];
+    const kind = h('select', { class: 'in' }, kinds.map(k => h('option', { value: k, selected: it ? it.kind === k : k === kinds[0] }, k === 'url' && sec.type === 'downloads' ? 'لینک دانلود بیرونی' : KINDS[k])));
+    const url = h('input', { class: 'in ltr', type: 'url', placeholder: 'https://', value: it && it.kind !== 'file' ? it.url : '' });
+    const fileIn = h('input', { class: 'in', type: 'file', accept: sec.type === 'videos' ? 'video/*' : undefined });
+    const fileInfo = h('p', { class: 'hint' });
+    const msg = h('p', { class: 'err', role: 'alert' });
+    const st = { path: it && it.kind === 'file' ? it.url : '', name: it ? it.file_name : '', size: it ? it.file_size : 0, fresh: null };
+    const showInfo = () => { fileInfo.textContent = st.path ? `فایل فعلی: ${st.name} (${sizeFa(st.size)})` : 'هنوز فایلی انتخاب نشده.'; };
+    showInfo();
+    const urlField = field('آدرس', url), fileField = h('div', { class: 'field' }, h('label', null, 'فایل (حداکثر ۲۵ مگابایت)'), fileIn, fileInfo);
+    const sync = () => { fileField.hidden = kind.value !== 'file'; urlField.hidden = kind.value === 'file'; };
+    kind.addEventListener('change', sync); sync();
+    fileIn.addEventListener('change', () => {
+      const file = fileIn.files[0]; msg.textContent = '';
+      if (!file) return;
+      if (file.size > MAX_FILE) { msg.textContent = 'این فایل بیشتر از ۲۵ مگابایت است. آن را جای دیگری (مثلاً گیت‌هاب ریلیز یا آپارات) بگذار و «لینک» بده.'; fileIn.value = ''; return; }
+      const ext = (file.name.match(/\.([A-Za-z0-9]{1,8})$/) || [, 'bin'])[1].toLowerCase();
+      const slug = file.name.replace(/\.[^.]+$/, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'file';
+      st.fresh = { path: `files/${Date.now().toString(36)}-${slug}.${ext}`, name: file.name, size: file.size, file };
+      st.path = st.fresh.path; st.name = file.name; st.size = file.size; showInfo();
+      if (!title.value) title.value = file.name.replace(/\.[^.]+$/, '');
+    });
+    let confirmDel = false;
+    const del = it && h('button', { class: 'btn danger small', type: 'button', onclick: ev => {
+      if (!confirmDel) { confirmDel = true; ev.target.textContent = 'مطمئنی؟ دوباره بزن'; return; }
+      sec.items = sec.items.filter(x => x !== it); d.close(); render();
+    } }, 'حذف');
+    const d = dialog(dlg => dlg.append(h('form', { method: 'dialog', onsubmit: ev => {
+      ev.preventDefault(); msg.textContent = '';
+      const v = { title: title.value.trim(), icon: icon.value.trim(), badge: badge.value.trim(), descr: descr.value.trim(), visible: vis.checked, kind: 'url', url: '', file_name: '', file_size: 0 };
+      if (!v.title) { msg.textContent = 'عنوان لازم است.'; return; }
+      if (sec.type !== 'text') {
+        v.kind = kind.value;
+        if (v.kind === 'file') {
+          if (!st.path) { msg.textContent = 'اول فایل را انتخاب کن.'; return; }
+          Object.assign(v, { url: st.path, file_name: st.name, file_size: st.size });
+        } else {
+          v.url = cleanUrl(url.value);
+          if (!v.url) { msg.textContent = 'آدرس باید با http یا https شروع شود.'; return; }
+          if (v.kind === 'embed' && !embedOk(v.url)) { msg.textContent = 'فقط آپارات، یوتیوب و ویمئو مجازند.'; return; }
+        }
+      }
+      if (st.fresh) pending.set(st.fresh.path, st.fresh.file);
+      if (it) Object.assign(it, { id: it.id, ...v }); else sec.items.push({ id: nextId(), ...v });
+      dlg.close(); render();
+    } }, h('h3', null, (it ? 'ویرایش در «' : 'افزودن به «') + sec.title + '»'),
+    field('عنوان', title),
+    sec.type !== 'text' && field('منبع', kind), sec.type !== 'text' && urlField, sec.type !== 'text' && fileField,
+    h('div', { class: 'two' }, field('برچسب', badge), field('آیکون (ایموجی)', icon)),
+    field('توضیح', descr), h('label', { class: 'check' }, vis, 'نمایش در سایت'), msg,
+    h('div', { class: 'row' }, h('button', { class: 'btn', type: 'submit' }, 'ذخیره'), h('button', { class: 'btn ghost', type: 'button', onclick: () => dlg.close() }, 'بستن'), h('span', { class: 'spacer' }), del))));
+    title.focus();
+  }
+
+  const readContent = () => JSON.parse(document.getElementById('vx-content').textContent);
+  window.addEventListener('beforeunload', e => { if (pending.size) { e.preventDefault(); e.returnValue = ''; } });
+  window.VXAdmin = { start() { if (!D) { D = readContent(); D.sections.forEach(x => { x.items = x.items || []; }); } render(); } };
+})();
+</script>
+
+</body>
+</html>
